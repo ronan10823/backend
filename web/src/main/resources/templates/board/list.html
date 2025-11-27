@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}"
+>
+  <th:block layout:fragment="title">
+    <title>게시판 List</title>
+  </th:block>
+  <div layout:fragment="content">
+    <h1 th:text="${'BOARD LIST'}"></h1>
+    <h2>게시판</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">번호</th>
+          <th scope="col">제목</th>
+          <th scope="col">작성자</th>
+          <th scope="col">작성일</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="dto : ${list}">
+          <th scope="row" th:text="${dto.id}"></th>
+          <td>
+            <!-- http://localhost:8080/board/read?id=1 -->
+            <a th:href="@{read(id=${dto.id})}" th:text="${dto.title}"></a>
+          </td>
+          <td th:text="${dto.writer}"></td>
+          <td th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>th:if</h3>
+    <ul>
+      <li th:each="dto : ${list}">
+        <span th:if="${dto.id % 5 == 0}" th:text="${'-------- '+dto.id}"></span>
+        <span th:unless="${dto.id % 5 == 0}" th:text="${dto.id}"></span>
+      </li>
+    </ul>
+
+    <h3>th:switch</h3>
+    <ul>
+      <li th:each="dto, state : ${list}" th:switch="${state.even}">
+        <span th:case="true" th:text="${'-------- '+dto.id}"></span>
+        <span th:case="false" th:text="${dto.id}"></span>
+      </li>
+    </ul>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">index</th>
+          <th scope="col">count</th>
+          <th scope="col">size</th>
+          <th scope="col">odd/even</th>
+          <th scope="col">번호</th>
+          <th scope="col">제목</th>
+          <th scope="col">작성자</th>
+          <th scope="col">작성일</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="dto,state : ${list}">
+          <td th:text="${state.index}"></td>
+          <td th:text="${state.count}"></td>
+          <td th:text="${state.size}"></td>
+          <td th:text="${state.odd} + '/' + ${state.even}"></td>
+          <th scope="row" th:text="${dto.id}"></th>
+          <td th:text="${dto.title}"></td>
+          <td th:text="${dto.writer}"></td>
+          <td th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</html>
