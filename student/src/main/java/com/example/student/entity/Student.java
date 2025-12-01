@@ -1,4 +1,4 @@
-package com.example.jpa.entity;
+package com.example.student.entity;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.example.jpa.entity.constant.Grade;
+import com.example.student.entity.constant.Grade;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,12 +57,9 @@ public class Student {
     @Enumerated(EnumType.STRING) // 기본값은 숫자인 0부터 시작
     @Column
     private Grade grade;
-
-    @CreationTimestamp // insert 시 자동으로 삽입
-    private LocalDateTime createDateTime1;
     
     @CreatedDate // spring boot 설정 후 삽입
-    private LocalDateTime createDateTime2;
+    private LocalDateTime createDateTime;
 
     @LastModifiedDate
     private LocalDateTime upDateTime;

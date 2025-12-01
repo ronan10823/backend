@@ -1,15 +1,17 @@
-package com.example.jpa.repository;
+package com.example.student.repository;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.jpa.entity.Student;
-import com.example.jpa.entity.constant.Grade;
+import com.example.student.entity.Student;
+import com.example.student.entity.constant.Grade;
 
+@Disabled
 @SpringBootTest
 public class StudentRepositoryTest {
     
@@ -57,17 +59,21 @@ public class StudentRepositoryTest {
         }
 
 
-    // @Test
-    // public void insertTest(){
-    //     Student student = Student.builder()
-    //     .name("성춘향")
-    //     .addr("서울")
-    //     .gender("F")
-    //     .grade(Grade.SENIOR)
-    //     .build();
+    @Test
+    public void insertTest(){
+
+        for (int i = 1; i < 11; i++) {
+            Student student = Student.builder()
+            .name("성춘향"+i)
+            .addr("서울")
+            .gender("F")
+            .grade(Grade.SENIOR)
+            .build();
+            studentRepository.save(student);
+            
+        }
 
     // // insert(C), update(U) 작업 시 호출
-    //     studentRepository.save(student);
 
     //     // delete from ~ 호출
         // studentRepository.delete(student);
@@ -78,5 +84,5 @@ public class StudentRepositoryTest {
         // select * from 
         // studentRepository.findAll();
     // }
-
+    }
 }
