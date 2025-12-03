@@ -24,5 +24,5 @@ public class StudentDTO {
     private String gender;
     private Grade grade;
     private LocalDateTime createDateTime;
-    private LocalDateTime updateDateTime;
+    private LocalDateTime upDateTime;
 }
