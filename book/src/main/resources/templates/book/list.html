@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/layout}">
+  <div layout:fragment="content">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">List</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">isbn</th>
+              <th scope="col">title</th>
+              <th scope="col">price</th>
+              <th scope="col">author</th>
+              <th scope="col">description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="dto:${list}">
+              <th scope="row" th:text="${dto.isbn}"></th>
+              <td><a href="" th:href="@{/book/read(id=${dto.id})}" th:text="${dto.title}"></a></td>
+              <td th:text="${dto.title}"></td>
+              <td th:text="${dto.author}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+      // the third step
+      let msg = [[${msg}]];
+
+      if (msg) {
+          Swal.fire({
+            title: msg,
+            icon: "success",
+            draggable: true,
+          });
+      }
+      // // first step
+    </script>
+  </th:block>
+</html>

@@ -1,5 +1,6 @@
 package com.example.book.entity;
 
+import org.springframework.context.annotation.Description;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -40,7 +41,13 @@ public class Book {
     @Column(nullable = false)
     private String author;
 
+    private String description;
+
     public void changePrice(int price) {
         this.price = price;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
     }
 }
