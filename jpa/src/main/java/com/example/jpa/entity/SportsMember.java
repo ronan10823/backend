@@ -7,35 +7,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
+@ToString(exclude = "locker")
 @Builder
-@ToString(exclude = "team")
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class TeamMember {
+public class SportsMember {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MEMBER_ID")
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    // manytoone could get the null. so, we put that optional
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    // @ManyToOne(optional = false)
-    @JoinColumn(name = "team_id")
-    private Team team;
-
-    public void changeTeam(Team team) {
-        this.team = team;
-    }
+    @JoinColumn(name = "LOCKER_ID")
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    // @OneToOne(optional = false)
+    private Locker locker;
 }
