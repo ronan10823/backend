@@ -1,16 +1,10 @@
-package com.example.jpa.entity;
+package com.example.mart.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,29 +12,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString(exclude = "members")
-// @ToString
 @Builder
+@ToString(exclude = "order")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name = "teamtbl")
+@Table(name = "mart_member")
 @Entity
-public class Team {
+public class Member extends BaseEntity {
+
+    // id, name, city, street, zipcode
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "team_id")
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "team", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-    private List<TeamMember> members = new ArrayList<>();
+    @Column(nullable = false)
+    private String city;
 
-    public void changeName(String name) {
-        this.name = name;
-    }
+    @Column(nullable = false)
+    private String street;
+
+    @Column(nullable = false)
+    private String zipcode;
 }

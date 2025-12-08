@@ -1,5 +1,6 @@
 package com.example.jpa.entity;
 // 테이블명 : itemtbl 
+
 // 컬럼명 : 상품코드(code - P0001, id), 상품명(item_nm), 가격(item_price), 재고수량(stock_number)
 //         상세설명(item_detail), 판매상태(item_sell_status) : SELL, SOLDOUT,
 //         등록시간, 수정시간
@@ -29,14 +30,13 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
-@EntityListeners(value = AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Table(name = "itemtbl")
 @Entity
-public class Item {
+public class Item extends BaseEntity {
 
     @Id
     private String code;
@@ -46,21 +46,15 @@ public class Item {
 
     @Column(nullable = false)
     private int itemPrice;
-    
+
     @Column(nullable = false)
     private int stockNumber;
-    
+
     private String itemDetail;
-        
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ItemSellStatus status;
-
-    @CreatedDate
-    private LocalDateTime createDate; 
-
-    @LastModifiedDate
-    private LocalDateTime updateDate;
 
     public void changeStatus(ItemSellStatus status) {
         this.status = status;

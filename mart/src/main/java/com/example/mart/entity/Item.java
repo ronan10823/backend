@@ -1,12 +1,12 @@
-package com.example.jpa.entity;
+package com.example.mart.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,31 +16,34 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+// import lombok.ToString;
 import lombok.ToString;
 
-@ToString(exclude = "members")
-// @ToString
+@ToString(exclude = "orderItems")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name = "teamtbl")
+@Table(name = "mart_item")
 @Entity
-public class Team {
+public class Item extends BaseEntity {
+
+    // id, name, price, quantity
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "team_id")
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "team", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-    private List<TeamMember> members = new ArrayList<>();
+    @Column(nullable = false)
+    private Integer price;
 
-    public void changeName(String name) {
-        this.name = name;
-    }
+    @Column(nullable = false)
+    private int quantity;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "item")
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

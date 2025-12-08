@@ -1,4 +1,6 @@
-package com.example.jpa.entity;
+package com.example.mart.entity;
+
+import org.hibernate.annotations.ManyToAny;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,7 +8,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,32 +15,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Builder
-@ToString(exclude = "team")
+@ToString(exclude = { "order", "item" })
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Entity
-public class TeamMember {
+public class OrderItem {
+    // id, orderPrice(주문 가격), count(주문 수량)
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private int orderPrice;
 
-    // manytoone could get the null. so, we put that optional
+    @Column(nullable = false)
+    private int count;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    // @ManyToOne(optional = false)
-    @JoinColumn(name = "team_id")
-    private Team team;
+    private Order order;
 
-    public void changeTeam(Team team) {
-        this.team = team;
-    }
-
-    public void changeName(String name) {
-        this.name = name;
-    }
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Item item;
 }
