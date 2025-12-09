@@ -13,4 +13,20 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // unique라서 하나만 나오기 때무네 List -> Optional 로 변경
 
     List<Book> findByTitleContaining(String title); // = where title = '자바'
+
+    // where author = ''
+    List<Book> findByAuthor(String author);
+
+    // where author like '%영'
+    List<Book> findByAuthorEndingWith(String author);
+
+    // where author like '박%'
+    List<Book> findByAuthorStartingWith(String author);
+
+    // where author like '%진수%'
+    List<Book> findByAuthorContaining(String author);
+
+    // 도서 가격이 12000 이상 35000 이하
+    List<Book> findByPriceBetween(int startPrice, int EndPrice);
+
 }

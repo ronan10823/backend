@@ -1,12 +1,13 @@
 package com.example.book.service;
 
-import java.util.ArrayList;
+// import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+// import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.book.dto.BookDTO;
 import com.example.book.entity.Book;
@@ -14,6 +15,7 @@ import com.example.book.repository.BookRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class BookService {
@@ -38,6 +40,7 @@ public class BookService {
     // isbn => 결과가 한 개밖에 없다.
     // id => 하나만 조회
 
+    @Transactional(readOnly = true)
     public void readTitle(String title) {
 
         // bookRepository.findBy 우리는 이것만 알고 있다. 그러면 어떻게 하냐?
@@ -53,6 +56,7 @@ public class BookService {
         result.stream().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public BookDTO readIsbn(String isbn) {
 
         Book book = bookRepository.findByIsbn(isbn).orElseThrow();
@@ -62,6 +66,7 @@ public class BookService {
 
     }
 
+    @Transactional(readOnly = true)
     public BookDTO readId(Long id) {
 
         Book book = bookRepository.findById(id).orElseThrow();
@@ -75,6 +80,7 @@ public class BookService {
         Book book = bookRepository.findById(upDto.getId()).orElseThrow();
         book.changePrice(upDto.getPrice());
         book.changeDescription(upDto.getDescription());
+
         return bookRepository.save(book).getId();
     }
 
@@ -82,6 +88,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<BookDTO> getList() {
         List<Book> result = bookRepository.findAll();
         return result.stream()

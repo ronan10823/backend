@@ -37,7 +37,7 @@ public class Team {
     private String name;
 
     @Builder.Default
-    @OneToMany(mappedBy = "team", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "team", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     private List<TeamMember> members = new ArrayList<>();
 
     public void changeName(String name) {

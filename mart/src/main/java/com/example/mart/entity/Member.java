@@ -1,10 +1,14 @@
 package com.example.mart.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Builder
-@ToString(exclude = "order")
+@ToString(exclude = "orders")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -30,12 +34,15 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String city;
-
-    @Column(nullable = false)
     private String street;
-
-    @Column(nullable = false)
     private String zipcode;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders = new ArrayList<>();
+
+    public void changeCity(String city) {
+        this.city = city;
+    }
 }

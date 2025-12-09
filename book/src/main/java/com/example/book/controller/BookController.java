@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.book.dto.BookDTO;
-import com.example.book.dto.RegisterDTO;
+// import com.example.book.dto.RegisterDTO;
 import com.example.book.service.BookService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RequiredArgsConstructor
@@ -59,7 +59,7 @@ public class BookController {
     }
 
     @GetMapping({ "/read", "/modify" })
-    public void getRead(@RequestParam Long id, Model model) {
+    public void getRead(@RequestParam("id") Long id, Model model) {
         log.info("도서 상세 조회 {}", id);
 
         BookDTO dto = bookService.readId(id);
