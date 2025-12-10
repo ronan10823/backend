@@ -1,12 +1,11 @@
 package com.example.book.dto;
 
-import groovy.transform.ToString;
-import groovy.transform.builder.Builder;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
+// import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+// import lombok.Setter;
 
 // @ToString
 // @Setter

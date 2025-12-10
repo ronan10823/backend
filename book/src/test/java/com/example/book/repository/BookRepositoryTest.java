@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.hibernate.proxy.EntityNotFoundDelegate;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.example.book.entity.Book;
+import com.example.book.entity.QBook;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -18,13 +21,14 @@ import jakarta.persistence.EntityNotFoundException;
 @SpringBootTest
 public class BookRepositoryTest {
 
-    @Autowired // 안 하면 오류난다. -> Bookrepository null 이라는 메시지
+    @Autowired
     private BookRepository bookRepository;
 
     @Test
     public void insert() {
 
-        // Book book = new Book 의 다른 방식
+        // Book book = new Book();
+
         Book book = Book.builder()
                 .isbn("A101010")
                 .title("파워 자바")
@@ -52,12 +56,11 @@ public class BookRepositoryTest {
 
     @Test
     public void testRead() {
-        // bookRepository.findById(1L); // findById는 Optional 로 반환
         // bookRepository.findById(1L).orElse(null);
         Book book = bookRepository.findById(1L).orElseThrow();
         // bookRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
         // Optional<Book> result = bookRepository.findById(1L);
-        // if (result.isPresent()) {
+        // if(result.isPresent()) {
         // Book book = result.get();
         // }
         System.out.println(book);
@@ -77,7 +80,7 @@ public class BookRepositoryTest {
     public void testModify() {
         Book book = bookRepository.findById(1L).orElseThrow();
         book.changePrice(35000);
-        bookRepository.save(bookRepository.save(book)); // 왜 save 안이 book 이면 안되는 걸까
+        System.out.println(bookRepository.save(book));
     }
 
     @Test
@@ -101,6 +104,49 @@ public class BookRepositoryTest {
 
         list = bookRepository.findByPriceBetween(12000, 35000);
         System.out.println("findByPriceBetween " + list);
+    }
+
+    @Test
+    public void pageTest() {
+        // bookRepository.findAll(Pageable pageable);
+        // limit ?, ? : 특정 범위만 가져오기
+        // select count(b1_0.id) : 전체 행의 개수
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        Page<Book> result = bookRepository.findAll(pageRequest);
+
+        System.out.println("page size " + result.getSize());
+        System.out.println("TotalPages " + result.getTotalPages());
+        System.out.println("TotalElements(전체 행 개수) " + result.getTotalElements());
+        System.out.println("content " + result.getContent());
+    }
+
+    // -----------------------
+    // querydsl 라이브러리 추가 / QuerydslPredicateExecutor 상속
+    // -----------------------
+
+    @Test
+    public void querydslTest() {
+
+        QBook book = QBook.book;
+
+        // where b1_0.title=?
+        System.out.println(bookRepository.findAll(book.title.eq("title1")));
+        // where b1_0.title like %?%
+        System.out.println(bookRepository.findAll(book.title.contains("파워")));
+        // where b1_0.title like %?% and b1_0.id>?
+        System.out.println(bookRepository.findAll(book.title.contains("파워").and(book.id.gt(3L))));
+
+        // where b1_0.title like %?% and b1_0.id>? order by id desc
+        System.out.println(
+                bookRepository.findAll(book.title.contains("파워").and(book.id.gt(3L)), Sort.by("id").descending()));
+
+        // where author '%천%' or title='%파워%'
+        System.out.println(bookRepository.findAll(book.title.contains("파워").or(book.author.contains("천"))));
+
+        // bookRepository.findAll(Predicate predicate, Pageable pageable)
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        Page<Book> result = bookRepository.findAll(book.id.gt(0L), pageRequest);
 
     }
+
 }

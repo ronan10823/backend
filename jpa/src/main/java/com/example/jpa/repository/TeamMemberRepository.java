@@ -1,6 +1,7 @@
 package com.example.jpa.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.example.jpa.entity.Team;
 import com.example.jpa.entity.TeamMember;
@@ -10,4 +11,12 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     // 팀 정보를 이용해 팀원 찾기
     List<TeamMember> findByTeam(Team team);
 
+    @Query("select m, t from TeamMember m join m.team t where t = :team")
+    List<Object[]> findByMemberAndTeam(Team team);
+
+    @Query("select m, t from TeamMember m join m.team t where t.id = :id")
+    List<Object[]> findByMemberAndTeam2(Long id);
+
+    @Query("select m, t from TeamMember m left join m.team t")
+    List<Object[]> findByMemberAndTeam3();
 }

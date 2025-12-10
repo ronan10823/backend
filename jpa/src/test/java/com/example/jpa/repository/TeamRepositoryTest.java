@@ -1,6 +1,7 @@
 package com.example.jpa.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -187,6 +188,48 @@ public class TeamRepositoryTest {
 
         TeamMember teamMember = team.getMembers().get(0);
         teamMember.changeName("홍시루");
+    }
+
+    // Qurey 테스트
+    @Test
+    public void testQuery() {
+
+        Team team = teamRepository.findById(2L).get();
+        List<Object[]> result = teamMemberRepository.findByMemberAndTeam(team);
+
+        for (Object[] objects : result) {
+            // System.out.println(Arrays.toString(objects));
+            TeamMember member = (TeamMember) objects[0];
+            Team team1 = (Team) objects[1];
+            System.out.println(member);
+            System.out.println(team1);
+        }
+    }
+
+    @Test
+    public void testQuery2() {
+        List<Object[]> result = teamMemberRepository.findByMemberAndTeam2(2L);
+
+        for (Object[] objects : result) {
+            // System.out.println(Arrays.toString(objects));
+            TeamMember member = (TeamMember) objects[0];
+            Team team1 = (Team) objects[1];
+            System.out.println(member);
+            System.out.println(team1);
+        }
+    }
+
+    @Test
+    public void testQuery3() {
+        List<Object[]> result = teamMemberRepository.findByMemberAndTeam3();
+
+        for (Object[] objects : result) {
+            // System.out.println(Arrays.toString(objects));
+            TeamMember member = (TeamMember) objects[0];
+            Team team1 = (Team) objects[1];
+            System.out.println(member);
+            System.out.println(team1);
+        }
     }
 
 }

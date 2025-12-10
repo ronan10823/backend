@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import com.example.book.entity.Book;
+import com.example.book.entity.QBook;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository extends JpaRepository<Book, Long>, QuerydslPredicateExecutor<Book> {
 
     Optional<Book> findByIsbn(String isbn); // where isbn = 'A10000' , 즉, like 개념이 없다. %와 같은 것도 없다.
     // unique라서 하나만 나오기 때무네 List -> Optional 로 변경
@@ -29,4 +33,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // 도서 가격이 12000 이상 35000 이하
     List<Book> findByPriceBetween(int startPrice, int EndPrice);
 
+    public default Predicate makePredicate(String type, String keyword) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QBook book = QBook.book;
+
+        builder.and(book.id.gt(0)); // book- where b.id > 0과 같은 조건을 넣을 공간.
+        return builder;
+    }
 }
