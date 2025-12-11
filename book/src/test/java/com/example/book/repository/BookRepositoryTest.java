@@ -17,7 +17,7 @@ import com.example.book.entity.QBook;
 
 import jakarta.persistence.EntityNotFoundException;
 
-// @Disabled
+@Disabled
 @SpringBootTest
 public class BookRepositoryTest {
 

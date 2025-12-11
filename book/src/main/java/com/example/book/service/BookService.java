@@ -92,7 +92,8 @@ public class BookService {
                 Sort.by("id").descending());
 
         // findAll(Predicate predicate, Pageable pageable)
-        Page<Book> result = bookRepository.findAll(bookRepository.makePredicate(null, null), pageable);
+        Page<Book> result = bookRepository
+                .findAll(bookRepository.makePredicate(pageRequestDTO.getType(), pageRequestDTO.getKeyword()), pageable);
 
         // get() : Stream<Book>
         List<BookDTO> dtoList = result.get()
