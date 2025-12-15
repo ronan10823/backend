@@ -8,47 +8,48 @@
           <div class="card-body">
             <form action="" method="post">
               <div class="mb-3">
-                <label for="isbn" class="form-label">ISBN</label>
+                <label for="bno" class="form-label">ID</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="isbn"
-                  aria-describedby="isbn"
-                  name="isbn"
-                  th:value="${dto.isbn}"
+                  id="bno"
+                  aria-describedby="bno"
+                  name="bno"
+                  th:value="${dto.bno}"
                   readonly
                 />
               </div>
               <div class="mb-3">
                 <label for="title" class="form-label">TITLE</label>
-                <input type="text" class="form-control" id="title" name="title" th:value="${dto.title}" readonly />
+                <input type="text" class="form-control" id="title" name="title" th:value="${dto.title}" />
               </div>
               <div class="mb-3">
-                <label for="author" class="form-label">AUTHOR</label>
-                <input type="text" class="form-control" id="author" name="author" th:value="${dto.author}" readonly />
+                <label for="content" class="form-label">CONTENT</label>
+                <textarea name="content" id="content" rows="10" class="form-control">[[${dto.content}]]</textarea>
               </div>
               <div class="mb-3">
-                <label for="price" class="form-label">PRICE</label>
-                <input type="text" class="form-control" id="price" name="price" th:value="${dto.price}" />
+                <label for="createDate" class="form-label">CREATEDATE</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="createDate"
+                  name="createDate"
+                  th:value="${#temporals.format(dto.createDate, 'yyyy-MM-dd HH:mm')}"
+                  disabled
+                />
               </div>
-              <div class="mb-3">
-                <label for="description" class="form-label">DESCRIPTION</label>
-                <textarea class="form-control" id="description" name="description" rows="3">
-[[${dto.description}]]</textarea
-                >
-              </div>
-              <input type="hidden" name="id" th:value="${dto.id}" />
               <!-- pageRequestDTO를 modify에서는 포함하지 않아도 되지만, remove에서는 필요로 하다. -->
               <input type="hidden" name="page" th:value="${pageRequestDTO.page}" />
               <input type="hidden" name="size" th:value="${pageRequestDTO.size}" />
-              <button type="submit" class="btn btn-primary">수정</button>
+              <button type="submit" class="btn btn-success">수정</button>
               <button type="button" class="btn btn-danger">삭제</button>
               <a
                 type="button"
-                class="btn btn-success"
-                th:href="@{/book/list(page=${pageRequestDTO.page},size=${pageRequestDTO.size})}"
+                class="btn btn-primary"
+                th:href="@{/board/list(page=${pageRequestDTO.page},size=${pageRequestDTO.size})}"
                 >목록</a
               >
+              <!-- <input type="hidden" name="page" th:value="${pageRequestDTO.page}" /> -->
             </form>
           </div>
         </div>
