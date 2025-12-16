@@ -2,17 +2,17 @@
 <html lang="en" layout:decorate="~{layouts/main_layout}">
   <div layout:fragment="content">
     <h1>Create</h1>
-    <form action="" method="post" id="insert-form" th:object="${dto}">
+    <form action="" method="post" id="insert-form">
       <div class="mb-3">
         <label for="text" class="form-label">내용</label>
-        <textarea class="form-control" id="text" rows="3" name="text">[[${dto.text}]]</textarea>
-        <div class="text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+        <textarea class="form-control" id="text" rows="3" name="text"></textarea>
       </div>
       <a type="button" class="btn btn-outline-success" th:href="@{/memo/list}">목록</a>
       <button type="submit" class="btn btn-outline-primary">추가</button>
     </form>
     <th:block layout:fragment="script">
       <!-- 페이지별 개별 javascript 작성 -->
+      <script th:src="@{/js/create2.js}"></script>
     </th:block>
   </div>
 </html>

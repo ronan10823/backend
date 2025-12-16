@@ -55,7 +55,7 @@ public class PostController {
     public String postDelete(BoardDTO dto, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("삭제 {} {}", dto, pageRequestDTO);
 
-        boardService.update(dto);
+        boardService.delete(dto);
 
         rttr.addFlashAttribute("msg", "게시글 삭제가 완료되었습니다.");
         rttr.addAttribute("page", pageRequestDTO.getPage());

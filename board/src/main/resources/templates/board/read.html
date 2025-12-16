@@ -63,6 +63,7 @@
     <script th:inline="javascript">
       // the third step
       let msg = [[${msg}]];
+      const bno = [[${dto.bno}]];
 
       if (msg) {
           Swal.fire({
@@ -73,5 +74,6 @@
       }
       // // first step
     </script>
+    <script th:src="@{/js/read.js}"></script>
   </th:block>
 </html>
