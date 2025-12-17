@@ -21,13 +21,17 @@ public interface BoardRepository extends JpaRepository<Board, Long>, SearchBoard
     @Query("select b, r from Board b left join Reply r on r.board = b where b.bno = :bno")
     List<Object[]> getBoardWithReply(@Param("bno") Long bno);
 
-    // 하나 조회 (목적: 하나의 게시글에 들어가면, 하단에 댓글을 나오게 하고 싶다. )
-    @Query("select b, m, count(r) from Board b left join b.writer m left join Reply r on r.board = b where b.bno = :bno")
-    Object getBoardByBno(@Param("bno") Long bno);
+    // // 하나 조회 (목적: 하나의 게시글에 들어가면, 하단에 댓글을 나오게 하고 싶다. )
+    // => querydsl 변경(댓글 처리)
+    // @Query("select b, m, count(r) from Board b left join b.writer m left join
+    // Reply r on r.board = b where b.bno = :bno")
+    // Object getBoardByBno(@Param("bno") Long bno);
 
-    // 목록화면 => 페이지 나누기 필요
-    // 처음에만 사용(search를 위해 변경) -> 지금은 사용 X
-    @Query(value = "select b, m, count(r) from Board b left join b.writer m left join Reply r on r.board = b group by b", countQuery = "select count(b) from Board b")
-    Page<Object[]> getBoardWithReplyCount(Pageable pageable);
+    // // 목록화면 => 페이지 나누기 필요
+    // // 처음에만 사용(search를 위해 변경) -> 지금은 사용 X
+    // @Query(value = "select b, m, count(r) from Board b left join b.writer m left
+    // join Reply r on r.board = b group by b", countQuery = "select count(b) from
+    // Board b")
+    // Page<Object[]> getBoardWithReplyCount(Pageable pageable);
 
 }
