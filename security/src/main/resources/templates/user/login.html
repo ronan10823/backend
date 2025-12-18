@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form class="login-form" method="post" action="/login">
+      <h2>Please sign in</h2>
+
+      <p>
+        <label for="username" class="screenreader">Username</label>
+        <input type="text" id="username" name="username" placeholder="Username" required="" autofocus="" />
+      </p>
+      <p>
+        <label for="password" class="screenreader">Password</label>
+        <input type="password" id="password" name="password" placeholder="Password" required="" />
+      </p>
+
+      <input name="_csrf" type="hidden" value="xfOPo_qiXGTj0KKMjS_oJQEkZG2sgTT4uJmhIe-rQBKhTpQB_ca8m86Ub13O5ZS1tALcFjkQSQyftQPV2__FF4nJdCfHLfZj" />
+      <button type="submit" class="primary">Sign in</button>
+    </form>
+  </body>
+</html>
