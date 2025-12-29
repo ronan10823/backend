@@ -6,24 +6,15 @@
         <h5 class="card-title fw-semibold mb-4">게시글 등록</h5>
         <div class="card">
           <div class="card-body">
-            <form action="" method="post" th:object="${boardDTO}">
+            <form th:action="@{/board/create}" method="post" th:object="${boardDTO}">
               <div class="mb-3">
                 <label for="title" class="form-label">제목</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="title"
-                  aria-describedby="title"
-                  name="title"
-                  th:value="${boardDTO.title}"
-                />
+                <input type="text" class="form-control" id="title" aria-describedby="title" name="title" th:value="${boardDTO.title}" />
                 <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
               </div>
               <div class="mb-3">
                 <label for="content" class="form-label">내용</label>
-                <textarea class="form-control" id="content" name="content" rows="3">
-                  [[${boardDTO.content}]]</textarea
-                >
+                <textarea class="form-control" id="content" name="content" rows="3">[[${boardDTO.content}]]</textarea>
                 <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
               </div>
               <div class="mb-3">
@@ -34,7 +25,8 @@
                   id="writerName"
                   aria-describedby="writerName"
                   name="writerName"
-                  th:value="${boardDTO.writerName}"
+                  th:value="${#authentication.principal.name}"
+                  readonly
                 />
               </div>
               <div class="mb-3">
@@ -44,7 +36,7 @@
                   id="writerEmail"
                   aria-describedby="writerEmail"
                   name="writerEmail"
-                  value="user1@gmail.com"
+                  th:value="${#authentication.name}"
                 />
               </div>
               <button type="submit" class="btn btn-primary">등록</button>

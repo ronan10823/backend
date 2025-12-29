@@ -5,6 +5,7 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="card-title fw-semibold mb-4">List</h5>
+
           <form action="" method="get" class="d-flex align-items-center gap-2" id="actionForm">
             <input type="hidden" name="page" th:value="${pageRequestDTO.page}" />
             <input type="hidden" name="size" th:value="${pageRequestDTO.size}" />
@@ -16,17 +17,10 @@
               <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목 + 내용</option>
               <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">제목 + 내용 + 작성자</option>
             </select>
-            <input
-              type="text"
-              name="keyword"
-              class="form-control"
-              style="width: 200px"
-              th:value="${pageRequestDTO.keyword}"
-            />
+            <input type="text" name="keyword" class="form-control" style="width: 200px" th:value="${pageRequestDTO.keyword}" />
             <button type="submit" class="btn btn-primary">검색</button>
           </form>
         </div>
-
         <table class="table">
           <thead>
             <tr>
@@ -37,7 +31,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="dto:${result.dtoList}">
+            <tr th:each="dto : ${result.dtoList}">
               <th scope="row" th:text="${dto.bno}"></th>
               <td>
                 <a
@@ -85,17 +79,15 @@
   <th:block layout:fragment="script">
     <script th:inline="javascript">
 
-      // the third step
       let msg = [[${msg}]];
 
       if (msg) {
           Swal.fire({
-            title: msg,
-            icon: "success",
-            draggable: true,
+              title: msg,
+              icon: "success",
+              draggable: true
           });
       }
-      // // first step
     </script>
     <script th:src="@{/js/list.js}"></script>
   </th:block>

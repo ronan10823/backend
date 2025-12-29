@@ -1,8 +1,11 @@
 package com.example.board.post.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.board.member.entity.Member;
@@ -27,7 +30,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString(exclude = { "writer", "replies" })
-@EntityListeners(value = AuditingEntityListener.class)
 @Getter
 @Builder
 @NoArgsConstructor

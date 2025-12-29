@@ -2,10 +2,8 @@ package com.example.board.post.service;
 
 import java.util.List;
 import java.util.function.Function;
-// import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-// import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,17 +25,19 @@ import lombok.extern.log4j.Log4j2;
 @Transactional
 @Log4j2
 @Service
-@RequiredArgsConstructor // autowired를 서비스에서 이 어노테이션으로 떼어낸다.
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
-    // private final ModelMapper mapper;
 
     // crud
     public Long insert(BoardDTO dto) {
+        // 게시글 등록
 
-        Member member = Member.builder().email(dto.getWriterEmail()).build();
+        Member member = Member.builder()
+                .email(dto.getWriterEmail())
+                .build();
 
         Board board = Board.builder()
                 .title(dto.getTitle())
@@ -49,20 +49,18 @@ public class BoardService {
 
     public void delete(BoardDTO dto) {
         // 게시글 삭제
-        // 자식으로 댓글 존재 -> 자식 댓글 먼저 삭제 후 게시글 삭제
+        // 자식으로 댓글 존재
         replyRepository.deleteByBno(dto.getBno());
         boardRepository.deleteById(dto.getBno());
     }
 
-    // @Transactional
     public void update(BoardDTO dto) {
 
-        // save하기 위해서 찾아야 한다.
         Board board = boardRepository.findById(dto.getBno()).get();
         board.changeTitle(dto.getTitle());
-        board.changeContent(dto.getContent()); // findbyid가 있기 때문에, dirtychecking이 된다.
+        board.changeContent(dto.getContent());
 
-        // boardRepository.save(board);
+        // boardRepository.save(null);
     }
 
     @Transactional(readOnly = true)
@@ -79,14 +77,22 @@ public class BoardService {
     @Transactional(readOnly = true)
     public PageResultDTO<BoardDTO> getList(PageRequestDTO requestDTO) {
 
-        Pageable pageable = PageRequest.of(requestDTO.getPage() - 1, requestDTO.getSize(), Sort.by("bno").descending());
+        Pageable pageable = PageRequest.of(requestDTO.getPage() - 1, requestDTO.getSize(),
+                Sort.by("bno").descending());
 
-        // @Qurey 사용
+        // @Query 사용
+        // Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
+
         Page<Object[]> result = boardRepository.list(requestDTO.getType(), requestDTO.getKeyword(), pageable);
 
-        // 화면단에서 필요한 정보: 번호,제목(댓글 개수),작성자,작성일
-        // 번호(제목, 댓글개수) 작성자, 작성일
+        // [Board(bno=91, title=title....91, content=content....91),
+        // Member(email=user6@gmail.com, password=1111, name=user6), 1]
+
+        // 번호,제목(댓글개수),작성자,작성일
+        // [Board(bno=499, title=title....99, content=content....99), user2@gmail.com,
+        // 0]
         Function<Object[], BoardDTO> f = en -> entityToDto((Board) en[0], (Member) en[1], (Long) en[2]);
+
         List<BoardDTO> dtoList = result.stream().map(f).collect(Collectors.toList());
         long totalCount = result.getTotalElements();
 
@@ -98,7 +104,7 @@ public class BoardService {
         return pageResultDTO;
     }
 
-    // entity -> dto
+    // entity => dto
     private BoardDTO entityToDto(Board board, Member member, Long replyCnt) {
 
         BoardDTO dto = BoardDTO.builder()
@@ -114,5 +120,4 @@ public class BoardService {
 
         return dto;
     }
-
 }

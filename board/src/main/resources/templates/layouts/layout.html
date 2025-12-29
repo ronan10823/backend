@@ -49,6 +49,7 @@
         </div>
       </div>
     </div>
+    <form sec:authorize="isAuthenticated()" th:action="@{/member/logout}" method="post" id="logoutForm"></form>
     <script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
     <script th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/assets/js/sidebarmenu.js}"></script>
@@ -57,6 +58,16 @@
     <script th:src="@{/assets/libs/simplebar/dist/simplebar.js}"></script>
     <script th:src="@{/assets/js/dashboard.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      // 로그아웃 클릭 시 logoutForm 전송
+      const logoutForm = document.querySelector("#logout");
+      if (logoutForm) {
+        logoutForm.addEventListener("click", (e) => {
+          e.preventDefault();
+          document.querySelector("#logoutForm").submit();
+        });
+      }
+    </script>
     <th:block layout:fragment="script">
       <!-- 페이지마다 다른 script 작성 영역 -->
     </th:block>

@@ -3,10 +3,12 @@ package com.example.board.post.repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import com.example.board.member.entity.QMember;
@@ -42,20 +44,18 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                 .leftJoin(member).on(board.writer.eq(member))
                 .leftJoin(reply).on(reply.board.eq(board));
 
-        // 데이터 베이스 Tuple == 레코드 == 하나의 행
+        // 데이터베이스 Tuple == 레코드 == 하나의 행
         JPQLQuery<Tuple> tuple = query.select(board, member, reply.count());
 
-        // where 절이 들어가줘야 페이지 나누기 절이 들어간다.
-        // where 절 작성
+        // where 절
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(board.bno.gt(0)); // where board.bno > 0 // bno = pk = index of itself. = the reaon of write the
-                                      // gt(0)
+        builder.and(board.bno.gt(0)); // where board.bno > 0
 
         // type = "t" or type = "c" or type = "w" or type = "tc" or type = "tcw"
-        // tc or tec => t, c, w
-        // query statement
+        // tc or tcw => t, c, w
+
         if (type != null) {
-            String[] typeArr = type.split(""); // "", 이렇게 하면 개별로 하나씩 잘라준다.
+            String[] typeArr = type.split("");
 
             BooleanBuilder conditionBuilder = new BooleanBuilder();
 
@@ -64,18 +64,15 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                     case "t":
                         conditionBuilder.or(board.title.contains(keyword));
                         break;
-
                     case "c":
                         conditionBuilder.or(board.content.contains(keyword));
                         break;
-
                     case "w":
                         // conditionBuilder.or(board.writer.email.contains(keyword));
                         conditionBuilder.or(member.email.contains(keyword));
                         break;
                 }
             }
-
             builder.and(conditionBuilder);
         }
 
@@ -84,12 +81,14 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
         // order by
         Sort sort = pageable.getSort();
 
-        // sort 기준이 여러 개 있을 수 있다.
+        // sort 기준이 여러개 있을 수 있다.
+        // Sort.by("bno").descending().and(Sort.by("title").ascending()
         sort.stream().forEach(order -> {
             Order direction = order.isAscending() ? Order.ASC : Order.DESC;
 
             String prop = order.getProperty();
-            PathBuilder orderByExpression = new PathBuilder<>(Board.class, "board");
+            PathBuilder<Board> orderByExpression = new PathBuilder<>(Board.class,
+                    "board");
             tuple.orderBy(new OrderSpecifier(direction, orderByExpression.get(prop)));
         });
 
@@ -101,12 +100,12 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
         tuple.offset(pageable.getOffset());
         tuple.limit(pageable.getPageSize());
 
-        log.info("==================================");
+        log.info("=====================");
         log.info(query);
-        log.info("==================================");
+        log.info("=====================");
 
         List<Tuple> result = tuple.fetch();
-        long count = tuple.fetchCount(); // 전체 개수
+        long count = tuple.fetchCount(); // 전체개수
 
         // List<Tuple> => List<Object[]> 변경
         List<Object[]> list = result.stream().map(t -> t.toArray()).collect(Collectors.toList());

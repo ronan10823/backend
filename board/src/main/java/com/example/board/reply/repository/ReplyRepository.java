@@ -11,7 +11,7 @@ import com.example.board.post.entity.Board;
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     @Modifying
-    @Query("delete from Reply r where r.board.bno = :bno ")
+    @Query("delete from Reply r where r.board.bno = :bno")
     public void deleteByBno(Long bno);
 
     List<Reply> findByBoardOrderByRno(Board board);

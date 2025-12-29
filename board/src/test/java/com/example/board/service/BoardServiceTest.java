@@ -1,5 +1,7 @@
 package com.example.board.service;
 
+import static org.mockito.Mockito.spy;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
@@ -25,7 +27,6 @@ public class BoardServiceTest {
     @Transactional(readOnly = true)
     @Test
     public void getListTest() {
-
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(1)
                 .size(10)
@@ -36,5 +37,6 @@ public class BoardServiceTest {
         boards.forEach(board -> {
             System.out.println(board);
         });
+
     }
 }

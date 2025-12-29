@@ -2,6 +2,7 @@ package com.example.board.repository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -13,10 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.board.member.entity.Member;
+import com.example.board.member.entity.constant.MemberRole;
 import com.example.board.member.repository.MemberRepository;
 import com.example.board.post.dto.PageRequestDTO;
 import com.example.board.post.entity.Board;
@@ -32,6 +35,9 @@ public class BoardRepositoryTest {
     private BoardRepository boardRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -42,9 +48,16 @@ public class BoardRepositoryTest {
         IntStream.rangeClosed(1, 10).forEach(i -> {
             Member member = Member.builder()
                     .email("user" + i + "@gmail.com")
-                    .password("1111")
+                    .password(passwordEncoder.encode("1111"))
+                    .fromSocial(false)
                     .name("user" + i)
                     .build();
+            member.addMemberRole(MemberRole.USER);
+
+            if (i > 9) {
+                member.addMemberRole(MemberRole.ADMIN);
+            }
+
             memberRepository.save(member);
         });
     }
@@ -53,13 +66,12 @@ public class BoardRepositoryTest {
     public void insertBoardTest() {
         IntStream.rangeClosed(1, 100).forEach(i -> {
 
-            // 멤버를 한 명 만들어서 무작위로 한 명 추출
             int idx = (int) (Math.random() * 10) + 1;
             Member member = Member.builder().email("user" + idx + "@gmail.com").build();
 
             Board board = Board.builder()
-                    .title("title.... " + i)
-                    .content("content ...." + i)
+                    .title("title...." + i)
+                    .content("content...." + i)
                     .writer(member)
                     .build();
             boardRepository.save(board);
@@ -71,33 +83,37 @@ public class BoardRepositoryTest {
         IntStream.rangeClosed(1, 100).forEach(i -> {
 
             long idx = (long) (Math.random() * 100) + 1;
+            Board board = Board.builder().bno(idx).build();
 
-            Board board = Board.builder()
-                    .bno(idx)
-                    .build();
+            int midx = (int) (Math.random() * 10) + 1;
+            Member member = Member.builder().email("user" + midx + "@gmail.com").build();
 
-            Reply reply = Reply.builder().text("reply...." + i).replyer("guest" + i).board(board).build();
+            Reply reply = Reply.builder()
+                    .text("reply...." + i)
+                    .replyer(member).board(board).build();
+
             replyRepository.save(reply);
         });
     }
 
-    @Test
-    public void insertReplyTest2() {
-        Board board = Board.builder()
-                .bno(613L)
-                .build();
-        IntStream.rangeClosed(1, 15).forEach(i -> {
+    // @Test
+    // public void insertReplyTest2() {
+    // Board board = Board.builder().bno(601L).build();
 
-            Reply reply = Reply.builder().text("reply...." + i).replyer("guest" + i).board(board).build();
-            replyRepository.save(reply);
-        });
-    }
+    // IntStream.rangeClosed(1, 15).forEach(i -> {
+
+    // Reply reply = Reply.builder().text("reply...." + i).replyer("guest" +
+    // i).board(board).build();
+
+    // replyRepository.save(reply);
+    // });
+    // }
 
     // board 읽기
     @Transactional(readOnly = true)
     @Test
-    public void readBoradTest() {
-
+    public void readBoardTest() {
+        // JPA 제공
         List<Board> list = boardRepository.findAll();
         list.forEach(board -> {
             System.out.println(board);
@@ -108,7 +124,8 @@ public class BoardRepositoryTest {
     @Test
     public void getBoardWithWriterListTest() {
 
-        // on 구문 생략 기준: 일치하는 컬럼 가져올 때만
+        // [Board(bno=98, title=title....98, content=content....98),
+        // Member(email=user9@gmail.com, password=1111, name=user9)]
         List<Object[]> result = boardRepository.getBoardWithWriterList();
         for (Object[] objects : result) {
             System.out.println(Arrays.toString(objects));
@@ -125,10 +142,9 @@ public class BoardRepositoryTest {
         System.out.println(board.getReplies());
     }
 
-    @Transactional(readOnly = true)
     @Test
     public void getBoardWithWriterTest2() {
-        // JPA
+        // JPQL(@Query)
         List<Object[]> result = boardRepository.getBoardWithReply(33L);
         // for (Object[] objects : result) {
         // System.out.println(Arrays.toString(objects));
@@ -157,19 +173,23 @@ public class BoardRepositoryTest {
     // // Stream<Object[]> data2 = result.getContent().stream();
 
     // result.get().forEach(obj -> {
-    // // System.out.println(Arrays.toString(obj))
+    // // System.out.println(Arrays.toString(obj);
     // Board board = (Board) obj[0];
     // Member member = (Member) obj[1];
     // Long replyCnt = (Long) obj[2];
     // });
 
-    // result.get().forEach(System.out::println);
+    // // Object[] => String
+    // Function<Object[], String> f = Arrays::toString;
+
+    // // Object[] objects
+    // result.get().forEach(obj -> System.out.println(f.apply(obj))); //
+    // [Ljava.lang.Object;@2a19eaf0
     // }
 
     @Test
     public void getBoardByBnoTest() {
-
-        Object result = boardRepository.getBoardByBno(512L);
+        Object result = boardRepository.getBoardByBno(601L);
         Object[] arr = (Object[]) result;
         System.out.println(Arrays.toString(arr));
     }
@@ -179,12 +199,8 @@ public class BoardRepositoryTest {
     @Transactional
     @Test
     public void deleteByBnoTest() {
-
-        replyRepository.deleteByBno(92L); // replytbl과 연관
-        boardRepository.deleteById(92L); // boardtbl과 연관
-        // 그렇다면 만약에 boardtbl에서 오류가 나면, rollback이 되어야 한다. 이를 위해서는 deletebyBno와
-        // deletebyID가 같은 메소드로 취급하게 해야 한다.
-        // 이 기능이 transacitonal이다.
+        replyRepository.deleteByBno(91L);
+        boardRepository.deleteById(91L);
     }
 
     // querydsl 테스트
@@ -204,8 +220,8 @@ public class BoardRepositoryTest {
         // Sort.by("bno").descending().and(Sort.by("title").ascending()));
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize());
-
         Page<Object[]> result = boardRepository.list(pageRequestDTO.getType(), pageRequestDTO.getKeyword(), pageable);
+
         for (Object[] objects : result) {
             System.out.println(Arrays.toString(objects));
         }

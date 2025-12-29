@@ -1,5 +1,6 @@
 package com.example.board.post.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,30 +15,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.board.post.dto.BoardDTO;
 import com.example.board.post.dto.PageRequestDTO;
 import com.example.board.post.dto.PageResultDTO;
-// import com.example.board.post.entity.Board;
 import com.example.board.post.service.BoardService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@RequiredArgsConstructor
-@RequestMapping("/board")
 @Log4j2
 @Controller
+@RequiredArgsConstructor
+@RequestMapping("/board")
 public class PostController {
 
     private final BoardService boardService;
 
+    // 유효성 검증 + 데이터 도착 +
+
     @GetMapping("/create")
-    public void getCreate(BoardDTO dto, PageRequestDTO pageRequestDTO) {
+    public void getCreate(BoardDTO dto) {
         log.info("작성 폼 요청");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String postCreate(@Valid BoardDTO dto, BindingResult result, PageRequestDTO pageRequestDTO,
-            RedirectAttributes rttr) {
+    public String postCreate(@Valid BoardDTO dto, BindingResult result, RedirectAttributes rttr) {
         log.info("작성 {}", dto);
 
         if (result.hasErrors()) {
@@ -47,10 +49,11 @@ public class PostController {
         // 서비스 호출
         Long bno = boardService.insert(dto);
 
-        rttr.addFlashAttribute("msg", bno + "번 게시물 등록 완료");
+        rttr.addFlashAttribute("msg", bno + "번 게시물 등록이 완료되었습니다.");
         return "redirect:/board/list";
     }
 
+    @PreAuthorize("authentication.name == #dto.writerEmail")
     @PostMapping("/remove")
     public String postDelete(BoardDTO dto, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("삭제 {} {}", dto, pageRequestDTO);
@@ -58,6 +61,7 @@ public class PostController {
         boardService.delete(dto);
 
         rttr.addFlashAttribute("msg", "게시글 삭제가 완료되었습니다.");
+
         rttr.addAttribute("page", pageRequestDTO.getPage());
         rttr.addAttribute("size", pageRequestDTO.getSize());
         return "redirect:/board/list";
@@ -71,6 +75,7 @@ public class PostController {
         model.addAttribute("dto", dto);
     }
 
+    @PreAuthorize("authentication.name == #dto.writerEmail")
     @PostMapping("/modify")
     public String postModify(BoardDTO dto, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("수정 {} {}", dto, pageRequestDTO);

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <h3>업로드 테스트</h3>
+    <!-- <form action="" method="post" enctype="multipart/form-data">
+      <input type="file" name="uploadFile" id="" />
+    </form> -->
+
+    <!-- 
+        accept="image/png, image/jpeg" : 첨부 파일 제한
+        multiple : 한번에 여러 개 파일 선택 가능
+    -->
+    <input type="file" name="uploadFiles" id="" multiple accept="image/png, image/jpeg" />
+    <button type="button">업로드</button>
+    <div id="output"></div>
+    <script>
+      // x를 클릭 시 파일 삭제
+      // 이거를 어떤 식으로 가져올것인가? 화면의 x는 여러 개 있으므로, 부모를 가져오면 편할 것 같다.
+      // event bubbling을 이용해서 하는 개념
+      document.querySelector("#output").addEventListener("click", (e) => {
+        e.preventDefault();
+        console.log("이벤트 대상 ", e.target); // <i class="fa-solid fa-xmark"></i>
+        // i 를 감싸고 있는 a 태그 필요 => 가까운 부모 요소를 찾는 메소드로 closet가 있다.
+        //  closest(): 가장 가까운 "부모 요소" 찾기
+        const aTag = e.target.closest("a");
+        const div = e.target.closest("div");
+        // // 이 중에서도 href 값이 필요하다. = href 값 가져오기
+        // console.log("속성 값 ", aTag.href);
+        // console.log("속성 값 ", aTag.getAttribute("href"));
+
+        const href = aTag.getAttribute("href");
+
+        // controller로 요청 보내기
+        const formData = new FormData();
+        formData.append("fileName", href);
+        // fileName으로 왜 한 걸까? => controller의 파일 삭제와 맞추기 위해서!
+
+        fetch("/upload/remove", {
+          method: "post",
+          body: formData,
+        })
+          .then((res) => res.text())
+          .then((data) => {
+            console.log(data);
+            // 화면에서 이미지 제거
+            div.remove();
+          });
+      });
+
+      const showUploadImages = (files) => {
+        const output = document.querySelector("#output");
+
+        let tags = "";
+
+        files.forEach((file) => {
+          tags += "<div>";
+          tags += `<img src="/upload/display?fileName=${file.thumbnailURL}">`;
+          tags += `<a href="${file.imageURL}"><i class="fa-solid fa-xmark"></i></a>`;
+          tags += "</div>";
+        });
+        output.insertAdjacentHTML("beforeend", tags);
+      };
+
+      document.querySelector("button").addEventListener("click", () => {
+        const uploadFiles = document.querySelector("[name='uploadFiles']");
+        const files = uploadFiles.files;
+        console.log(files);
+
+        const formData = new FormData();
+        for (let idx = 0; idx < files.length; idx++) {
+          formData.append("uploadFiles", files[idx]);
+        }
+        fetch("/upload/upload", {
+          method: "post",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            showUploadImages(data);
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder // 상속 구조에서도 builder 패턴 사용
+@SuperBuilder // 상속구조에서도 builder 패턴 사용
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageRequestDTO {
