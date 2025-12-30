@@ -41,4 +41,8 @@ public class Movie extends BaseEntity {
         movieImage.setOrd(this.movieImages.size());
         movieImages.add(movieImage);
     }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 }

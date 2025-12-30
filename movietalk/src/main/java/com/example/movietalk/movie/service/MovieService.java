@@ -23,7 +23,6 @@ import com.example.movietalk.movie.entity.MovieImage;
 import com.example.movietalk.movie.repository.MovieImageRepository;
 import com.example.movietalk.movie.repository.MovieRepository;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.actionElement_return;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -35,6 +34,35 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
     private final MovieImageRepository movieImageRepository;
+
+    // 영화 삭제
+    public void deleteRow(Long mno) {
+        // 영화 이미지 제거
+        Movie movie = movieRepository.findById(mno).get();
+        movieImageRepository.deleteByMovie(movie);
+        // 영화 삭제
+        movieRepository.delete(movie);
+
+    }
+
+    // 영화 수정
+    public Long updateRow(MovieDTO dto) {
+
+        // 영화 타이틀(제목) 변경(수정)
+        Movie movie = movieRepository.findById(dto.getMno()).get();
+        movie.changeTitle(dto.getTitle());
+        // movieRepository.save(movie); 이거를 안 함 왜? dirty checking을 하기 때문, 변경 사항을 자동으로
+        // 감지해서 저장되기 때문
+
+        // 영화 이미지 제거 (MovieImage에서 해당 mno의 이미지 모두 삭제)
+        movieImageRepository.deleteByMovie(movie);
+
+        // 영화 이미지 수정
+        movie = dtoToEntity(dto);
+        movie.getMovieImages().forEach(img -> movieImageRepository.save(img));
+
+        return movie.getMno();
+    }
 
     // 상세 조회
     @Transactional(readOnly = true)
@@ -97,7 +125,7 @@ public class MovieService {
     // return entityMap;
     // }
 
-    // 1:N의 관계 추가 설정 + cascade
+    // 1:N의 관계 추가 설정 + cascade = create와 유사함
     public String register(MovieDTO dto) {
 
         Movie movie = dtoToEntity(dto);

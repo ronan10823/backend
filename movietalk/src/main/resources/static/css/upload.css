@@ -20,3 +20,7 @@
 .uploadResult ul li img {
   width: 100px;
 }
+
+.uploadResult li {
+  cursor: pointer;
+}

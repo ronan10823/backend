@@ -13,7 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.method.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.movietalk.member.entity.Member;
@@ -44,6 +46,17 @@ public class MovieRepositoryTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Commit
+    @Transactional
+    @Test
+    public void deleteByMovieTest() {
+        Movie movie = movieRepository.findById(118L).get();
+        // 영화 이미지 삭제
+        movieImageRepository.deleteByMovie(movie);
+        // 영화
+        movieRepository.delete(movie);
+    }
 
     @Transactional(readOnly = true)
     @Test

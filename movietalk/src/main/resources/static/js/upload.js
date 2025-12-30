@@ -1,30 +1,5 @@
 const fileInput = document.querySelector("[name='file']");
 
-document.querySelector(".uploadResult").addEventListener("click", (e) => {
-  e.preventDefault();
-
-  const aTag = e.target.closest("a");
-  const li = e.target.closest("li");
-
-  // href 값 가져오기
-  const href = aTag.getAttribute("href");
-
-  // controller로 요청 보내기
-  const formData = new FormData();
-  formData.append("fileName", href);
-
-  fetch("/upload/remove", {
-    method: "post",
-    body: formData,
-  })
-    .then((res) => res.text())
-    .then((data) => {
-      console.log(data);
-      // 화면에서 이미지 제거
-      li.remove();
-    });
-});
-
 const showUploadImages = (files) => {
   const output = document.querySelector(".uploadResult ul");
 
@@ -58,4 +33,28 @@ fileInput.addEventListener("change", (e) => {
       console.log(data);
       showUploadImages(data);
     });
+});
+
+// 등록 클릭 시(form submit이 일어나면)
+document.querySelector("#createForm").addEventListener("submit", (e) => {
+  // submit 기능 중지
+  e.preventDefault();
+
+  // uploadResult  안 li 정보를 수집해야 하기 때문이다. 그 정보 수집 이후 form hidden tag로 append하려고 하기 때문.
+  const attachInfos = document.querySelectorAll(".uploadResult li");
+  // li를 전체로 찾았기 때문에 반드시 배열로 들어온다. 그래서 forEach로 해야한다.
+
+  let result = "";
+
+  attachInfos.forEach((obj, idx) => {
+    result += `<input type="hidden" name="movieImages[${idx}].imgName" value="${obj.dataset.name}">`;
+    result += `<input type="hidden" name="movieImages[${idx}].uuid" value="${obj.dataset.uuid}">`;
+    result += `<input type="hidden" name="movieImages[${idx}].path" value="${obj.dataset.path}">`;
+  });
+
+  e.target.insertAdjacentHTML("beforeend", result);
+
+  console.log(e.target.innerHTML);
+
+  e.target.submit();
 });
