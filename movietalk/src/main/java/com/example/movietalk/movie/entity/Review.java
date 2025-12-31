@@ -40,4 +40,13 @@ public class Review extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "mid")
     private Member member;
+
+    // 전체 setteㄱ는 적용하지 말고, 어지간하면 변경해야하는 것이 생기면 그것만 만들자.
+    public void changeText(String text) {
+        this.text = text;
+    }
+
+    public void changeGrade(int grade) {
+        this.grade = grade;
+    }
 }
