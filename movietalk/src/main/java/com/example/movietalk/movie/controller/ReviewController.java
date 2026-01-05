@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,27 +49,31 @@ public class ReviewController {
     }
 
     // 2) 실제 리뷰 수정작업 /reviews/300(mno)/rno + PUT
+    // 로그인 사용자 == 리뷰 사용자
+    @PreAuthorize("authentication.name == #dto.email")
     @PutMapping("/{mno}/{rno}")
     public ResponseEntity<Long> putReview(@PathVariable Long rno, @RequestBody ReviewDTO dto) {
         log.info("특정 영화의 특정 리뷰 수정 {}", dto);
+
         rno = reviewServive.updateRow(dto);
 
         // 상태에 대한 코드를 같이 보내고 싶다면? response Entity를 써라.
+        // 상태 코드 전송
         // HttpStatus.ACCEPTED;
         return new ResponseEntity<Long>(rno, HttpStatus.valueOf(200));
-
     }
 
     // 특정 영화의 리뷰 삭제 /reviews/mno/rno + DELETE
+    @PreAuthorize("authentication.name == #email")
     @DeleteMapping("/{mno}/{rno}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long rno) {
+    public ResponseEntity<String> deleteReview(@PathVariable Long rno, String email) {
         log.info("특정 영화의 삭제 {}", rno);
-
         reviewServive.deleteRow(rno);
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }
 
     // 특정 영화의 리뷰 추가 /reviews/mno + POST
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{mno}")
     public Long postReview(@PathVariable Long mno, @RequestBody ReviewDTO dto) {
         // 추가하는 거라서 내용을 받아서 보내야 하기에, @RequestBody가 필요하다.
