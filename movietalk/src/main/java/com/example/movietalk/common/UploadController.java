@@ -95,6 +95,9 @@ public class UploadController {
             // c:/upload/2025--
             File file = new File(uploadPath + File.separator + srcFileName);
 
+            // if (!file.exists()) {
+            //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // }
             HttpHeaders headers = new HttpHeaders();
             // Files.probeContentType(file.toPath()) -=> png 등의 이미지 정보(image/png, image/jpeg
             // 등)를 브라우저에게 알려준다. 그래야 서버에서 준비할 수 있다.

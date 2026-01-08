@@ -3,7 +3,6 @@ package com.example.movietalk.movie.entity;
 import com.example.movietalk.common.BaseEntity;
 import com.example.movietalk.member.entity.Member;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,8 @@ public class MovieService {
         // Movie 첫 번째 배열의 첫 번째 Movie만 가져오기
         Movie movie = (Movie) result.get(0)[0];
 
-        List<MovieImage> movieImages = result.stream().map(en -> (MovieImage) en[1]).collect(Collectors.toList());
+        List<MovieImage> movieImages = result.stream().map(en -> (MovieImage) en[1]).filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         // review 수 / 평점 첫 번째 배열의 첫 번째 값들 가져오기
         Long reviewCnt = (Long) result.get(0)[2];
@@ -181,8 +183,12 @@ public class MovieService {
         // dtoList.add(dto);
         // });
 
-        Function<Object[], MovieDTO> function = (obj -> entityToDto((Movie) obj[0], List.of((MovieImage) obj[1]),
-                (Long) obj[2], (Double) obj[3]));
+        Function<Object[], MovieDTO> function = (obj -> {
+
+            MovieImage mi = (MovieImage) obj[1];
+            List<MovieImage> images = (mi == null) ? List.of() : List.of(mi);
+            return entityToDto((Movie) obj[0], images, (Long) obj[2], (Double) obj[3]);
+        });
 
         List<MovieDTO> dtoList = result.stream().map(function).collect(Collectors.toList());
         Long totalCount = result.getTotalElements();
@@ -204,18 +210,21 @@ public class MovieService {
                 .build();
 
         // List<MovieImage> => List<MovieImageDTO>
-        List<MovieImageDTO> imageDTOs = mImages.stream().map(movieImage -> {
-            return MovieImageDTO.builder()
-                    .inum(movieImage.getInum())
-                    .imgName(movieImage.getImgName())
-                    .uuid(movieImage.getUuid())
-                    .path(movieImage.getPath())
-                    .build();
-        }).collect(Collectors.toList());
+        if (mImages != null && mImages.size() > 0) {
+            List<MovieImageDTO> imageDTOs = mImages.stream().map(movieImage -> {
+                return MovieImageDTO.builder()
+                        .inum(movieImage.getInum())
+                        .imgName(movieImage.getImgName())
+                        .uuid(movieImage.getUuid())
+                        .path(movieImage.getPath())
+                        .build();
+            }).collect(Collectors.toList());
 
-        movieDTO.setMovieImages(imageDTOs);
+            movieDTO.setMovieImages(imageDTOs);
+        }
 
         return movieDTO;
+
     }
 
 }

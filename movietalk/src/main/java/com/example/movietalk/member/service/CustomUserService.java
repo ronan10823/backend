@@ -1,6 +1,5 @@
 package com.example.movietalk.member.service;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +11,6 @@ import com.example.movietalk.member.dto.CustomUserDTO;
 import com.example.movietalk.member.dto.PasswordDTO;
 import com.example.movietalk.member.entity.Member;
 import com.example.movietalk.member.repository.MemberRepository;
-import com.example.movietalk.movie.repository.MovieRepository;
 import com.example.movietalk.movie.repository.ReviewRepository;
 
 import jakarta.transaction.Transactional;

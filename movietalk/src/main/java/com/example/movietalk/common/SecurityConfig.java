@@ -2,24 +2,14 @@ package com.example.movietalk.common;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 import lombok.extern.log4j.Log4j2;
 
 @EnableMethodSecurity // @PreAuthorize, @PostAuthorize 가능
@@ -35,11 +25,18 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/assets/**", "/img/**", "/js/**").permitAll()
-                .anyRequest().permitAll());
+                // exception handler가 먼저 걸려서 다르게 해야한다.
+                // 그래서 무엇을 열어줘야 하는지 말해줘야 한다
+                .requestMatchers("/movie/list").permitAll()
+                .requestMatchers("/movie/create").hasRole("ADMIN")
+                .requestMatchers("/movie/register").permitAll()
+                .requestMatchers("/upload/display/**").permitAll()
+                .anyRequest().authenticated()); // 지금은 다 인증받아야 하는 것으로 변경되었다.
 
-        http.formLogin(login -> login.loginPage("/member/login"));
-
-        // .successHandler(loginSuccessHandler()).permitAll()
+        http.formLogin(login -> login
+                .loginPage("/member/login").permitAll()
+                // .defaultSuccessUrl("/movie/list", true) 로그인 성공 후 정해진 경로가 단순할 때
+                .successHandler(loginSuccessHandler())); // 권한에 따라 서로 다르게 가야하는 경우
 
         // http.oauth2Login(login -> login.successHandler(loginSuccessHandler()));
         // 로그아웃 (controller에서는 post)
@@ -55,7 +52,16 @@ public class SecurityConfig {
 
         // http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
 
+        // 접근 제한 처리 (Security 설정에 핸들러 연결)
+        http.exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler()));
+
         return http.build();
+    }
+
+    // 핸들러를 Bean으로 연결
+    @Bean
+    CustomAccessDeniedHandler customAccessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 
     // @Bean
@@ -74,10 +80,10 @@ public class SecurityConfig {
     // return services;
     // }
 
-    // @Bean
-    // LoginSuccessHandler loginSuccessHandler() {
-    // return new LoginSuccessHandler();
-    // }
+    @Bean
+    LoginSuccessHandler loginSuccessHandler() {
+        return new LoginSuccessHandler();
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

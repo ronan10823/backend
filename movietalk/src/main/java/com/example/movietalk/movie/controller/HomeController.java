@@ -12,4 +12,14 @@ public class HomeController {
         return "redirect:/movie/list";
     }
 
+    // // 존재하지 않는 url -> /error 내부 포워딩
+    // @GetMapping("/error")
+    // public String getError() {
+    // return "/except/url404";
+    // }
+
+    @GetMapping("/access/denied")
+    public void getDenied() {
+    }
+
 }
