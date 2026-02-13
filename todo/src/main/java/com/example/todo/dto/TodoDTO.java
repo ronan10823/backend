@@ -1,5 +1,7 @@
 package com.example.todo.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,4 +24,8 @@ public class TodoDTO {
     private boolean completed;
 
     private boolean important;
+
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
 }

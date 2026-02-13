@@ -44,8 +44,16 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public List<TodoDTO> findCompletedTodos(boolean completed) {
-        List<Todo> result = todoRepository.findByCompleted(completed);
+    public List<TodoDTO> findCompletedTodos(Boolean completed) {
+
+        List<Todo> result = null;
+        if (completed == null) {
+            // 원래 boolean 타입은 null이 될 수 없지만, 파라미터를 Boolean으로 바꿔 객체로 취급해 해결
+            result = todoRepository.findAll();
+
+        } else {
+            result = todoRepository.findByCompleted(completed);
+        }
         // entity -> dto
         return result.stream().map(todo -> modelMapper.map(todo, TodoDTO.class)).collect(Collectors.toList());
 
@@ -59,9 +67,10 @@ public class TodoService {
 
     }
 
-    @Transactional(readOnly = true)
-    public List<TodoDTO> findTodos() {
-        List<Todo> result = todoRepository.findAll();
-        return result.stream().map(todo -> modelMapper.map(todo, TodoDTO.class)).collect(Collectors.toList());
-    }
+    // @Transactional(readOnly = true)
+    // public List<TodoDTO> findTodos() {
+    // List<Todo> result = todoRepository.findAll();
+    // return result.stream().map(todo -> modelMapper.map(todo,
+    // TodoDTO.class)).collect(Collectors.toList());
+    // }
 }
