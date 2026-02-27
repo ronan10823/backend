@@ -3,6 +3,7 @@ package com.example.novels.novel.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.novels.ai.domain.response.AiDescriptionDto;
 import com.example.novels.novel.dto.NovelDTO;
 import com.example.novels.novel.dto.PageRequestDTO;
 import com.example.novels.novel.dto.PageResultDTO;
@@ -96,4 +97,14 @@ public class NovelController {
         novelService.delete(id);
         return "success";
     }
+
+    @Operation(summary = "novel 소개글 생성", description = "LLM 모델을 이용한 소개글 생성")
+    @GetMapping("/{id}/ai-desc")
+    public AiDescriptionDto getRows(@PathVariable Long id) {
+        log.info("novel  {}", id);
+        AiDescriptionDto result = novelService.generateDescription(id);
+
+        return result;
+    }
+
 }
